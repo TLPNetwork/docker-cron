@@ -1,4 +1,4 @@
-FROM ubuntu:22.04
+FROM node:18
 
 RUN apt-get update \
     && DEBIAN_FRONTEND=noninteractive apt-get -y --no-install-recommends install -y cron curl \
@@ -8,14 +8,17 @@ RUN apt-get update \
     && rm -rf /etc/cron.*/*
 
 # Set the working directory for the app
-WORKDIR /workspace
+WORKDIR /workspacetemp
 
 # Copy the app into the container
-COPY . /workspace
+COPY . /workspacetemp
 
 # Set proper permissions for the storage and bootstrap/cache directories
-RUN chown -R www-data:www-data /workspace/build /workspace/node_modules \
-    && chmod -R 755 /workspace/build /workspace/node_modules
+RUN chown -R www-data:www-data /workspacetemp/build /workspacetemp/node_modules \
+    && chmod -R 755 /workspacetemp/build /workspacetemp/node_modules
+
+# Download dependencies
+RUN npm install
 
 # Copy the crontab file and entrypoint script into the container
 COPY crontab /hello-cron
