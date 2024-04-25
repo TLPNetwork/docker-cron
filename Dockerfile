@@ -7,12 +7,25 @@ RUN apt-get update \
     && which cron \
     && rm -rf /etc/cron.*/*
 
+# Set the working directory for the app
+WORKDIR /workspace
+
+# Copy the app into the container
+COPY . /workspace
+
+# Set proper permissions for the storage and bootstrap/cache directories
+RUN chown -R www-data:www-data /workspace/storage /workspace/bootstrap/cache \
+    && chmod -R 755 /workspace/storage /workspace/bootstrap/cache
+
+# Copy the crontab file and entrypoint script into the container
 COPY crontab /hello-cron
 COPY entrypoint.sh /entrypoint.sh
 
+# Install the crontab and make the entrypoint script executable
 RUN crontab hello-cron
 RUN chmod +x entrypoint.sh
 
+# Run the entrypoint script
 ENTRYPOINT ["/entrypoint.sh"]
 
 # https://manpages.ubuntu.com/manpages/trusty/man8/cron.8.html
