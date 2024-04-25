@@ -14,8 +14,8 @@ WORKDIR /workspace
 COPY . /workspace
 
 # Set proper permissions for the storage and bootstrap/cache directories
-RUN chown -R www-data:www-data /workspace/storage /workspace/bootstrap/cache \
-    && chmod -R 755 /workspace/storage /workspace/bootstrap/cache
+RUN chown -R www-data:www-data /workspace/build /workspace/node_modules \
+    && chmod -R 755 /workspace/build /workspace/node_modules
 
 # Copy the crontab file and entrypoint script into the container
 COPY crontab /hello-cron
